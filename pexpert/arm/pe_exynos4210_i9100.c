@@ -264,7 +264,7 @@ void ios7i9100_panic_text_end(void)
      * The top 256 rows are reserved; only the remaining body may scroll. */
     for(unsigned int n=0;n<480U*256U;n++)i9100_pixels[n]=0xff000000U;
     i9100f_cx=i9100f_cy=0;
-    i9100_puts("GPU31 CALL=");i9100_puthex(i9100_fatal_callsite);
+    i9100_puts("HUD32 CALL=");i9100_puthex(i9100_fatal_callsite);
     i9100_puts(" CAT=");i9100_puthex(i9100_fatal_category);
     i9100_puts("\nFORMATTED PANIC");
     if(i9100_panic_reason_known){
@@ -284,9 +284,9 @@ void ios7i9100_panic_text_end(void)
     if(i9100_fimd_map)*(volatile unsigned int *)(i9100_fimd_map+0x1a4)=3;
 }
 
-/* Temporary bring-up strip; i9100perf=0 disables it. No console scroll/logs
- * per frame. COPY is wall time for copy+DSB, GAP is time between presents,
- * IRQ is scheduler interrupts during GAP, SD is cumulative read-path time. */
+/* Compact runtime overlay: GPU, BAT and LIVE IRQ only. i9100perf=0 hides it.
+ * Keep RAM observations and the working trace/input path independently of
+ * what is displayed. Fatal reporting still owns its separate console. */
 extern unsigned char iso_font[];
 extern volatile uint32_t i9100_perf_sd_kib, i9100_perf_sd_ms;
 extern volatile uint32_t i9100_perf_sd_div, i9100_perf_sd_errors;
@@ -297,6 +297,7 @@ static int i9100_perf_strip = 1;
 static uint64_t i9100_perf_last_ticks;
 static volatile uint32_t i9100_irq_frame_tick,i9100_irq_frame_seen;
 static uint32_t i9100_perf_last_irqs;
+static volatile uint32_t i9100_live_irq_count, i9100_live_irq_pc;
 struct I9100FramePerformance {
     uint32_t frames, copy_us, gap_ms, irq_delta, sctlr, ram_cache, fb_cache;
 };
@@ -362,64 +363,57 @@ static void i9100_perf_text(unsigned y, const char *s)
 static void i9100_gpu_text(void)
 {
  char line[64];
- snprintf(line,sizeof(line),"GPU S%u E%d R%u GP%08x PP%x C%u P%u/4096",
+ snprintf(line,sizeof(line),"GPU S%u E%d R%u C%u P%u J%u X%u A%x M%x G%u",
   i9100_mali_observation.phase,i9100_mali_observation.error,
-  i9100_mali_observation.restore,i9100_mali_observation.gp_version,
-  i9100_mali_observation.pp_mask,i9100_mali_observation.clock_mhz,
-  i9100_mali_observation.pixels);
- i9100_perf_text(416,line);
- snprintf(line,sizeof(line),"GIRQ%06x/%04x M%x G%u T%u V%u J%u X%u A%x B%04x:%08x",
-  i9100_mali_observation.gp_irq,i9100_mali_observation.pp_irq,
-  i9100_mali_observation.mmu_fault,i9100_mali_observation.guard,
-  i9100_mali_observation.triangles,i9100_mali_observation.vertices,
+  i9100_mali_observation.restore,i9100_mali_observation.clock_mhz,
+  i9100_mali_observation.pixels,
   i9100_mali_observation.trial,i9100_mali_observation.textures,
-  i9100_mali_observation.render_mask,
-  i9100_mali_observation.bad_offset,i9100_mali_observation.actual);
- i9100_perf_text(432,line);
+  i9100_mali_observation.render_mask,i9100_mali_observation.mmu_fault,
+  i9100_mali_observation.guard);
+ i9100_perf_text(752,line);
+ if(i9100_mali_observation.error){
+  snprintf(line,sizeof(line),"GPU B%04x:%08x IRQ%x/%x T%u V%u PP%x",
+   i9100_mali_observation.bad_offset,i9100_mali_observation.actual,
+   i9100_mali_observation.gp_irq,i9100_mali_observation.pp_irq,
+   i9100_mali_observation.triangles,i9100_mali_observation.vertices,
+   i9100_mali_observation.pp_mask);
+  i9100_perf_text(736,line);
+ }
+}
+
+/* Use the same three rows after every present and from the IRQ observer.
+ * Otherwise a new UI frame erases LIVE IRQ until the next timer update. */
+static void i9100_status_text(void)
+{
+ char line[64];
+ i9100_gpu_text();
+ if(i9100_power_valid)
+  snprintf(line,sizeof(line),"BAT %u%% %umV T%d/10C USB%u CHG%u R%d REV%u",
+   i9100_power_percent,i9100_power_mv,i9100_power_temp,
+   i9100_power_connected,i9100_power_charging,i9100_power_reason,i9100_power_revision_value);
+ else snprintf(line,sizeof(line),"BAT unknown R%d REV%u (charging status unverified)",
+   i9100_power_reason,i9100_power_revision_value);
+ i9100_perf_text(768,line);
+ unsigned count=i9100_live_irq_count,pc=i9100_live_irq_pc;
+ char live[]="LIVE IRQ 00000000 PC 00000000";
+ for(unsigned n=0;n<8;n++){
+  live[9+n]="0123456789abcdef"[(count>>((7U-n)*4))&15U];
+  live[21+n]="0123456789abcdef"[(pc>>((7U-n)*4))&15U];
+ }
+ i9100_perf_text(784,live);
 }
 extern volatile int i9100_panel_console_enabled;
-/* IRQ-only progress marker: no allocation, I2C, IOKit calls or locks. A UI
+/* IRQ progress display: no allocation, I2C, IOKit calls or locks. A UI
  * stall with LIVE IRQ still advancing differs from an IRQ-masked hard hang.
  * Saved PC is the interrupted context, not proof that this PC caused a stall. */
 void ios7i9100_timer_observe(unsigned t,unsigned count,unsigned pc)
 {
- if(!i9100_perf_strip || count%100U || !i9100_irq_frame_seen ||
+ (void)t;
+ if(!i9100_perf_strip || count%100U)return;
+ i9100_live_irq_pc=pc;i9100_live_irq_count=count;
+ if(!i9100_irq_frame_seen ||
     i9100_panel_console_enabled || !i9100_pixels || i9100_fatal_active)return;
- uint32_t color=(count/100U)&1U?0xff00ff00U:0xffffffffU;
- for(unsigned y=0;y<8;y++)for(unsigned x=472;x<480;x++)i9100_pixels[y*480+x]=color;
- /* Show every observed second, including the first five seconds. The
-  * previous delayed row stayed invisible on the reported early stall. */
- {
-  (void)t;
-  char line[40]="LIVE IRQ 00000000 PC 00000000";
-  for(unsigned n=0;n<8;n++){
-   line[9+n]="0123456789abcdef"[(count>>((7U-n)*4))&15U];
-   line[21+n]="0123456789abcdef"[(pc>>((7U-n)*4))&15U];
-  }
-  i9100_perf_text(784,line);
- }
- {
-  char line[46];i9100_home_status_text(line);i9100_perf_text(736,line);
- }
- {
-  char line[64];i9100_touch_status_text(line);i9100_perf_text(688,line);
- }
- {
-  char first[64],second[64];
-  if(i9100_process_text(first,second,sizeof(first))){
-   i9100_perf_text(704,first);i9100_perf_text(720,second);
-  }
-  if(i9100_signal_text(first,second,sizeof(first))){
-   i9100_perf_text(656,first);i9100_perf_text(672,second);
-  }
-  if(i9100_backboard_text(first,second,sizeof(first))){
-   i9100_perf_text(624,first);i9100_perf_text(640,second);
-  }
-  i9100_gpu_text();
-  for (unsigned n = 0; n < 11; n++)
-   if(i9100_abort_line(n,i9100_process_exit.pid,i9100_process_exit.signal,first,sizeof(first)))
-    i9100_perf_text(448+n*16,first);
- }
+ i9100_status_text();
  __asm__ volatile("dsb sy" ::: "memory");
  if(i9100_fimd_map)*(volatile unsigned int *)(i9100_fimd_map+0x1a4)=3;
 }
@@ -466,43 +460,7 @@ int ios7i9100_display_present(const uint8_t *px, uint32_t bytes, uint32_t row,
     i9100_perf_last_ticks = began;
     i9100_irq_frame_tick=(uint32_t)began;i9100_irq_frame_seen=1;
     i9100_perf_last_irqs = timer.irq_count;
-    if (i9100_perf_strip) {
-        char line[128];
-        snprintf(line, sizeof(line), "GPU31 #%u COPY %uus GAP %ums IRQ %u",
-            i9100_frame_performance.frames, i9100_frame_performance.copy_us,
-            i9100_frame_performance.gap_ms, i9100_frame_performance.irq_delta);
-        i9100_perf_text(768, line);
-        snprintf(line, sizeof(line), "SD d%u %uKiB %ums E%u C%u RAM%03x FB%03x",
-            i9100_perf_sd_div, i9100_perf_sd_kib, i9100_perf_sd_ms,
-            i9100_perf_sd_errors, (i9100_frame_performance.sctlr >> 2) & 1U,
-            i9100_frame_performance.ram_cache, i9100_frame_performance.fb_cache);
-        i9100_perf_text(784, line);
-        if(i9100_power_valid)
-            snprintf(line,sizeof(line),"BAT %u%% %umV T%d/10C USB%u CHG%u R%d REV%u",
-                i9100_power_percent,i9100_power_mv,i9100_power_temp,
-                i9100_power_connected,i9100_power_charging,i9100_power_reason,i9100_power_revision_value);
-        else snprintf(line,sizeof(line),"BAT unknown R%d REV%u (charging status unverified)",
-                i9100_power_reason,i9100_power_revision_value);
-        i9100_perf_text(752,line);
-        i9100_home_status_text(line);i9100_perf_text(736,line);
-        i9100_touch_status_text(line);i9100_perf_text(688,line);
-        {
-            char first[64],second[64];
-            if(i9100_process_text(first,second,sizeof(first))){
-                i9100_perf_text(704,first);i9100_perf_text(720,second);
-            }
-            if(i9100_signal_text(first,second,sizeof(first))){
-                i9100_perf_text(656,first);i9100_perf_text(672,second);
-            }
-            if(i9100_backboard_text(first,second,sizeof(first))){
-                i9100_perf_text(624,first);i9100_perf_text(640,second);
-            }
-            i9100_gpu_text();
-            for (unsigned n = 0; n < 11; n++)
-                if(i9100_abort_line(n,i9100_process_exit.pid,i9100_process_exit.signal,first,sizeof(first)))
-                    i9100_perf_text(448+n*16,first);
-        }
-    }
+    if (i9100_perf_strip) i9100_status_text();
     __asm__ volatile("dsb sy" ::: "memory");
     *seq=i9100_graphics_seq++;
     if(!i9100_graphics_seq) i9100_graphics_seq=1;

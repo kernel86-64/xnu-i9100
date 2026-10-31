@@ -20,6 +20,7 @@ Current project status: [overview](../../README.md).
 - [GPU31: RGBA clear registers and BGRA writeback](GPU31_CLEAR_PACKING_20261031.md)
 - [HOME17 — исправление доставки физической Home, 30.10.2026](HOME17_NATIVE_QUEUE_20261030.md)
 - [I9100 Home, charging and cache maintenance — 2026-10-27](HOME_POWER_STABILITY_I9100_20261027.md)
+- [HUD32: compact GPU, BAT and LIVE IRQ overlay](HUD32_COMPACT_OVERLAY_20261101.md)
 - [IRQ5: restore interrupt masks after enabling preemption](IRQ5_PREEMPTION_20261028.md)
 - [LOCK8: capture the contended simple-lock call chain](LOCK8_OWNERSHIP_20261028.md)
 - [MAP13: preserve a competing L2 installation](MAP13_PMAP_EXPANSION_20261030.md)

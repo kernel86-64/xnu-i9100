@@ -1,7 +1,7 @@
 # XNU for Samsung Galaxy S2 GT-I9100
 
 Experimental Darwin/XNU 2422 (iOS 7 era) ARMv7 port to the international
-Samsung Galaxy S2, Exynos4210, 1 GB RAM, 480×800 display. **GPU31, 2026-10-31.**
+Samsung Galaxy S2, Exynos4210, 1 GB RAM, 480×800 display. **HUD32, 2026-11-01.**
 
 Based on [kOtusin/xnu-j1xlte](https://github.com/kOtusin/xnu-j1xlte), with earlier
 HTC HD2 work credited to Garysss123. Historical reference:
@@ -13,6 +13,11 @@ Published branch: [kernel86-64/xnu-i9100, i9100-source](https://github.com/kerne
 Companion loader: [kernel86-64/uniloader, i9100](https://github.com/kernel86-64/uniloader/tree/i9100).
 
 ## Current status
+
+The runtime overlay now occupies three bottom rows: compact GPU status, BAT and
+LIVE IRQ. GPU failures add one detail row. Home/touch, storage/performance and
+SpringBoard/backboard/abort diagnostics are retained in RAM and hidden from
+the runtime overlay. Fatal reports keep their separate emergency console.
 
 The phone boots iOS 7 to SpringBoard with touch and a software display path.
 The user reports that complete freezes stopped after the cache fixes; random
@@ -87,6 +92,7 @@ Unicorn/Capstone and explicit matching symbol paths; userspace verifiers require
 external Apple files which are not provided. Host checks cannot verify physical
 GPU execution, touch wiring, charging or long-term stability.
 
-See [board notes](docs/GT-I9100.md) and [GPU31 analysis](docs/progress/GPU31_CLEAR_PACKING_20261031.md).
+See [board notes](docs/GT-I9100.md), [compact overlay](docs/progress/HUD32_COMPACT_OVERLAY_20261101.md)
+and [GPU31 analysis](docs/progress/GPU31_CLEAR_PACKING_20261031.md).
 
 Dated development reports and GPU reference manifests: [progress archive](docs/progress/README.md).

@@ -1,5 +1,5 @@
 {
-  "stage": "GPU31",
+  "stage": "HUD32",
   "files": {
     ".gitignore": {
       "size": 302,
@@ -312,13 +312,13 @@
       "mode": "100644"
     },
     "PROVENANCE.json": {
-      "size": 528,
-      "sha256": "6013f825388746211d316eb17b23e90a70485d7fa217c61a441303140211178c",
+      "size": 499,
+      "sha256": "1bc8e671e7b570fd6f25ce59c04b44d12b1c55ce651b3e494b393863ff0b37cd",
       "mode": "100644"
     },
     "README.md": {
-      "size": 4428,
-      "sha256": "b4e7b67c69b6acf14bc4a05a9181b2025bf3997ea3fdfbe6969d37a9654adb0a",
+      "size": 4806,
+      "sha256": "4cbbacf4f21d2cf594e7e4efae69dbce9fdda4563687e14d0ffa784f5ee3db88",
       "mode": "100644"
     },
     "SETUP/Makefile": {
@@ -7997,8 +7997,8 @@
       "mode": "100644"
     },
     "docs/GT-I9100.md": {
-      "size": 3853,
-      "sha256": "fe2cf21a04f647f54c82f7658a9e48d7cbbdb346f6d875012023e20481068732",
+      "size": 4392,
+      "sha256": "661977b66b46d7064a8496db8d8eb6ee5c1677d90c01de05b3e2cde8f9000071",
       "mode": "100644"
     },
     "docs/README.upstream.md": {
@@ -8101,6 +8101,11 @@
       "sha256": "5d343b1fafe2eea99d0b2fcafe15147f7cfac79bc7b236bfb601fa9630afaadf",
       "mode": "100644"
     },
+    "docs/progress/HUD32_COMPACT_OVERLAY_20261101.md": {
+      "size": 2124,
+      "sha256": "390e5d5fc50f3e0137f75176b6763188e912e5327db4d8f29e0b9086ffacf10e",
+      "mode": "100644"
+    },
     "docs/progress/IRQ5_PREEMPTION_20261028.md": {
       "size": 3016,
       "sha256": "100f4212633e978218ab085df20024a40881d0833ca361634ab46a386b6ac2c2",
@@ -8152,8 +8157,8 @@
       "mode": "100644"
     },
     "docs/progress/README.md": {
-      "size": 3796,
-      "sha256": "b6b148e08e2e472d39d4857b4a44fc945b057314be42658f9c46f1b1ccdadfc3",
+      "size": 3880,
+      "sha256": "6e7671fd5ab27fba3c3b0cc80bf49c4ed3bba8bed778bd7f42d8edfaef04866c",
       "mode": "100644"
     },
     "docs/progress/RM29_REFMOD_RETENTION_20261031.md": {
@@ -17977,8 +17982,8 @@
       "mode": "100644"
     },
     "pexpert/arm/pe_exynos4210_i9100.c": {
-      "size": 33469,
-      "sha256": "259aec9c9a394d7f305de0811586deeb5d3dd35deb8343d4a87a5cf25566749c",
+      "size": 31285,
+      "sha256": "01c184f9b2f1add46e800489a43dd7d1212b7d0beac421889fe770b33c188ec8",
       "mode": "100644"
     },
     "pexpert/arm/pe_imx53.c": {
