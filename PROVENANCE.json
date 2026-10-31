@@ -1,0 +1,10 @@
+{
+  "local_base_commit": "55a319f84ed16345b3e7709765363fece575ddab",
+  "upstream": "https://github.com/kernel86-64/i9100-XNU.git",
+  "snapshot": {
+    "date": "2026-10-31",
+    "stage": "GPU31",
+    "status": "Experimental source snapshot. GPU30 phone confirms PP0 texture sampling and same-VA update, then fails first blend because PP clear RGBA and writeback BGRA differ. GPU31 corrects the clear packing; device validation pending. iOS GLES/EAGL backend remains unimplemented."
+  },
+  "includes_working_tree_changes": true
+}

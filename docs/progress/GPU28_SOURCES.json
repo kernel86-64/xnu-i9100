@@ -1,0 +1,193 @@
+{
+  "linux": "v6.12",
+  "mesa": "mesa-24.3.4",
+  "samsung_commit": "a0346556698e62405a04b010c4f4197bdc9fec06",
+  "documentation": "https://docs.mesa3d.org/drivers/lima.html",
+  "references": [
+    {
+      "file": "lima_parser.c",
+      "url": "https://gitlab.freedesktop.org/mesa/mesa/-/raw/mesa-24.3.4/src/gallium/drivers/lima/lima_parser.c",
+      "sha256": "a14b0c4a59ae19636059bdbc3d009048df7648bce4db0780682f975e814656a6"
+    },
+    {
+      "file": "lima_pmu.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/gpu/drm/lima/lima_pmu.c",
+      "sha256": "5ddd6816dae8d72aede28c7d4b11244c3f459d3eb989b243a9509a669b5226eb"
+    },
+    {
+      "file": "lima_screen.h",
+      "url": "https://gitlab.freedesktop.org/mesa/mesa/-/raw/mesa-24.3.4/src/gallium/drivers/lima/lima_screen.h",
+      "sha256": "d4f385bf5c7c4559913415461e53f531bc422a7d8ebe4a0966685eff72397c99"
+    },
+    {
+      "file": "lima_regs.h",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/gpu/drm/lima/lima_regs.h",
+      "sha256": "55744a28cd72025b3da86915050f37212b91d38c5971e8ccf16f7853bab87f0b"
+    },
+    {
+      "file": "lima_gp.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/gpu/drm/lima/lima_gp.c",
+      "sha256": "1aca8cfe96fb69059d39118aa560b9c440f14805b5800053f63639c602dade88"
+    },
+    {
+      "file": "clock-exynos4210.c",
+      "url": "https://raw.githubusercontent.com/CyanogenMod/android_kernel_samsung_smdk4210/a0346556698e62405a04b010c4f4197bdc9fec06/arch/arm/mach-exynos/clock-exynos4210.c",
+      "sha256": "cda5cd00e28dd5cee0f2e046b2a24258cee47f428cfd5a47fb0e2e0802cede74"
+    },
+    {
+      "file": "lima_l2_cache.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/gpu/drm/lima/lima_l2_cache.c",
+      "sha256": "adeedb39c6ddfd597acc749a2c006f31282994ae559609b61e0ecea6405fd31e"
+    },
+    {
+      "file": "lima_pp.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/gpu/drm/lima/lima_pp.c",
+      "sha256": "2613b7e3eab28c0909b174010b7ad7ac0f80d1d7e4c51b66dd81a9a0f9587f37"
+    },
+    {
+      "file": "lima_program.h",
+      "url": "https://gitlab.freedesktop.org/mesa/mesa/-/raw/mesa-24.3.4/src/gallium/drivers/lima/lima_program.h",
+      "sha256": "749746c986445ab85033b7d62c70e62f8eaea169af7435d6e95feeab450bbec7"
+    },
+    {
+      "file": "lima_device.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/gpu/drm/lima/lima_device.c",
+      "sha256": "c46e6b66784ae6b21b3d334b8543fa84b8e21abee82ec00a092a4d9976b326a6"
+    },
+    {
+      "file": "lima_context.c",
+      "url": "https://gitlab.freedesktop.org/mesa/mesa/-/raw/mesa-24.3.4/src/gallium/drivers/lima/lima_context.c",
+      "sha256": "dd130cc040ced184c8def699614f9488a217add5f4143fd380ba1c2b32352cfb"
+    },
+    {
+      "file": "max8997-regulator.c",
+      "url": "https://raw.githubusercontent.com/CyanogenMod/android_kernel_samsung_smdk4210/a0346556698e62405a04b010c4f4197bdc9fec06/drivers/regulator/max8997.c",
+      "sha256": "756da8e1940ea6c6fd65eb799824e6ec326105536fbca9f922553f7f1f2ed165"
+    },
+    {
+      "file": "lima_screen.c",
+      "url": "https://gitlab.freedesktop.org/mesa/mesa/-/raw/mesa-24.3.4/src/gallium/drivers/lima/lima_screen.c",
+      "sha256": "f2732acdc9f6224220ed94f3dd6dd0261027d4ef8a4927607d9707be73a3e0d0"
+    },
+    {
+      "file": "exynos4.dtsi",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/v6.12/arch/arm/boot/dts/samsung/exynos4.dtsi",
+      "sha256": "5c5522da68729d453193a704b2951cc8278e060d082640caf64b04b9b9719282"
+    },
+    {
+      "file": "exynos4210.dtsi",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/v6.12/arch/arm/boot/dts/samsung/exynos4210.dtsi",
+      "sha256": "b5ba29fc65e21123f213a44d88c8139fe33471a571bca68d20beb2990a8b0c4e"
+    },
+    {
+      "file": "lima_format.c",
+      "url": "https://gitlab.freedesktop.org/mesa/mesa/-/raw/mesa-24.3.4/src/gallium/drivers/lima/lima_format.c",
+      "sha256": "f7231c4b6f669c32de27fccd5ea82046381a431f41cb4ee7adf97a2dc3c4124c"
+    },
+    {
+      "file": "lima_draw.c",
+      "url": "https://gitlab.freedesktop.org/mesa/mesa/-/raw/mesa-24.3.4/src/gallium/drivers/lima/lima_draw.c",
+      "sha256": "ee9d207c12619f7c7e67103485f9cd88ef200a70539e022e0faf7f492735a658"
+    },
+    {
+      "file": "lima_gpu.h",
+      "url": "https://gitlab.freedesktop.org/mesa/mesa/-/raw/mesa-24.3.4/src/gallium/drivers/lima/lima_gpu.h",
+      "sha256": "4a51c19e81b1a4ce3e1f0b675f1f9deb2948fd58ba9012881a8a9cc480a0a406"
+    },
+    {
+      "file": "lima_job.c",
+      "url": "https://gitlab.freedesktop.org/mesa/mesa/-/raw/mesa-24.3.4/src/gallium/drivers/lima/lima_job.c",
+      "sha256": "ec494d9e3851007fb9871ae5bcab42b15a28578534d0e324616ce4d6a68407aa"
+    },
+    {
+      "file": "lima_mmu.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/gpu/drm/lima/lima_mmu.c",
+      "sha256": "d4297482b2705d4b645a42f168ab6cc3c7242cc6800002d07fd62a49899af91b"
+    },
+    {
+      "file": "lima_context.h",
+      "url": "https://gitlab.freedesktop.org/mesa/mesa/-/raw/mesa-24.3.4/src/gallium/drivers/lima/lima_context.h",
+      "sha256": "64486d30d1c21ca7ebf2b82a2ba2544229060a3db209088cd06629b626ec3953"
+    },
+    {
+      "file": "max8997-mfd.c",
+      "url": "https://raw.githubusercontent.com/CyanogenMod/android_kernel_samsung_smdk4210/a0346556698e62405a04b010c4f4197bdc9fec06/drivers/mfd/max8997.c",
+      "sha256": "f61d0cda8c9175370cabe2c9d08778c5ed0b274eee0bcc39692cab9128bf2742"
+    },
+    {
+      "file": "max8997-private.h",
+      "url": "https://raw.githubusercontent.com/CyanogenMod/android_kernel_samsung_smdk4210/a0346556698e62405a04b010c4f4197bdc9fec06/include/linux/mfd/max8997-private.h",
+      "sha256": "b75af12e6f0201f9433055f105a6350facb1eaa0dad240e50f907fb174933a29"
+    },
+    {
+      "file": "samsung/arch/arm/mach-exynos/clock-exynos4.c",
+      "url": "https://raw.githubusercontent.com/CyanogenMod/android_kernel_samsung_smdk4210/a0346556698e62405a04b010c4f4197bdc9fec06/arch/arm/mach-exynos/clock-exynos4.c",
+      "sha256": "12406121a1d3c3eed34a13176eb4d6e48e18bb8146608ac9f81cada814ddb51c"
+    },
+    {
+      "file": "samsung/arch/arm/mach-exynos/mach-u1.c",
+      "url": "https://raw.githubusercontent.com/CyanogenMod/android_kernel_samsung_smdk4210/a0346556698e62405a04b010c4f4197bdc9fec06/arch/arm/mach-exynos/mach-u1.c",
+      "sha256": "1b8c0e52b36d0c125a67dc28e4a1de80a87b3f835b6799fc0b2d66a2f5e3c294"
+    },
+    {
+      "file": "samsung/arch/arm/mach-exynos/u1_regulator_consumer.c",
+      "url": "https://raw.githubusercontent.com/CyanogenMod/android_kernel_samsung_smdk4210/a0346556698e62405a04b010c4f4197bdc9fec06/arch/arm/mach-exynos/u1_regulator_consumer.c",
+      "sha256": "62b33dfde993ce9fdd001f73abad4bae53887f3a6898bb82e71f11c6a8af89f0"
+    },
+    {
+      "file": "samsung/arch/arm/mach-exynos/include/mach/regs-pmu.h",
+      "url": "https://raw.githubusercontent.com/CyanogenMod/android_kernel_samsung_smdk4210/a0346556698e62405a04b010c4f4197bdc9fec06/arch/arm/mach-exynos/include/mach/regs-pmu.h",
+      "sha256": "adcde2c277f28f86d59d19699767804bc5c03106b7e572e56287f37d5c960763"
+    },
+    {
+      "file": "samsung/arch/arm/mach-exynos/include/mach/regs-clock.h",
+      "url": "https://raw.githubusercontent.com/CyanogenMod/android_kernel_samsung_smdk4210/a0346556698e62405a04b010c4f4197bdc9fec06/arch/arm/mach-exynos/include/mach/regs-clock.h",
+      "sha256": "dab5601accbaeed80b443be93760357bc3bba10558e003d69e122604d0f91f7f"
+    },
+    {
+      "file": "samsung/drivers/media/video/samsung/mali/arch-orion-m400/config.h",
+      "url": "https://raw.githubusercontent.com/CyanogenMod/android_kernel_samsung_smdk4210/a0346556698e62405a04b010c4f4197bdc9fec06/drivers/media/video/samsung/mali/arch-orion-m400/config.h",
+      "sha256": "c63733a123ba197007db617705c50879a705aef6b1b76388f79ea4c666170159"
+    },
+    {
+      "file": "samsung/drivers/media/video/samsung/mali/platform/orion-m400/mali_platform.c",
+      "url": "https://raw.githubusercontent.com/CyanogenMod/android_kernel_samsung_smdk4210/a0346556698e62405a04b010c4f4197bdc9fec06/drivers/media/video/samsung/mali/platform/orion-m400/mali_platform.c",
+      "sha256": "e3da114996d5f667ed1e6edf7fe26c5b3213a7c7d98a6acb49e0939dee35ea17"
+    },
+    {
+      "file": "samsung/drivers/media/video/samsung/mali/platform/orion-m400/mali_platform_dvfs.c",
+      "url": "https://raw.githubusercontent.com/CyanogenMod/android_kernel_samsung_smdk4210/a0346556698e62405a04b010c4f4197bdc9fec06/drivers/media/video/samsung/mali/platform/orion-m400/mali_platform_dvfs.c",
+      "sha256": "42b601b506e5b05f00c409de400cf85aebd3d84d41f3c8da4d4f2ab5fb329210"
+    },
+    {
+      "file": "mesa-lima/ir/gp/codegen.h",
+      "url": "https://gitlab.freedesktop.org/mesa/mesa/-/raw/mesa-24.3.4/src/gallium/drivers/lima/ir/gp/codegen.h",
+      "sha256": "ef22406fbfa51e9559cb73042c2fe31ed3dfa93794487ee9120e757c5c82cb57"
+    },
+    {
+      "file": "mesa-lima/ir/gp/codegen.c",
+      "url": "https://gitlab.freedesktop.org/mesa/mesa/-/raw/mesa-24.3.4/src/gallium/drivers/lima/ir/gp/codegen.c",
+      "sha256": "919b5abbf4303a6d48da92d4c9e0c33f6e7e1fcf1fc4af5673b70be4bbe6b469"
+    },
+    {
+      "file": "mesa-lima/ir/gp/disasm.c",
+      "url": "https://gitlab.freedesktop.org/mesa/mesa/-/raw/mesa-24.3.4/src/gallium/drivers/lima/ir/gp/disasm.c",
+      "sha256": "5c492c8130a6774e7bf1634941753f9d1bde25a7e018bd8b6e97a032b666bd20"
+    },
+    {
+      "file": "mesa-lima/ir/pp/codegen.h",
+      "url": "https://gitlab.freedesktop.org/mesa/mesa/-/raw/mesa-24.3.4/src/gallium/drivers/lima/ir/pp/codegen.h",
+      "sha256": "8581aa695679014c12af6ece8e40236efc5c222887090b242af64ed731008bc6"
+    },
+    {
+      "file": "mesa-lima/ir/pp/codegen.c",
+      "url": "https://gitlab.freedesktop.org/mesa/mesa/-/raw/mesa-24.3.4/src/gallium/drivers/lima/ir/pp/codegen.c",
+      "sha256": "230d7c3eb482612893be742258712fc9486f662134307effe9b2ecef1721e402"
+    },
+    {
+      "file": "mesa-lima/ir/pp/disasm.c",
+      "url": "https://gitlab.freedesktop.org/mesa/mesa/-/raw/mesa-24.3.4/src/gallium/drivers/lima/ir/pp/disasm.c",
+      "sha256": "f3192557212b9f29730a42dfa6c6e2800b55945cf68900a2eb0a65d6fc7411bd"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "previous_commit": "eca5450522a27e07eb8ccda376bdc764b8063b23",
+  "original_to_archived_path": {
+    "LICENSE-NOTICE.md": "LICENSE-NOTICE.md",
+    "SOURCE-AUDIT.md": "docs/progress/upstream-j1xlte/SOURCE-AUDIT.md",
+    "SOURCE-MANIFEST.sha256": "docs/progress/upstream-j1xlte/SOURCE-MANIFEST.sha256",
+    "network-port/compat/TargetConditionals.h": "docs/progress/upstream-j1xlte/network-port/compat/TargetConditionals.h",
+    "network-port/headers/IOKit/network/IOBasicOutputQueue.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IOBasicOutputQueue.h",
+    "network-port/headers/IOKit/network/IOEthernetController.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IOEthernetController.h",
+    "network-port/headers/IOKit/network/IOEthernetInterface.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IOEthernetInterface.h",
+    "network-port/headers/IOKit/network/IOEthernetStats.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IOEthernetStats.h",
+    "network-port/headers/IOKit/network/IOGatedOutputQueue.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IOGatedOutputQueue.h",
+    "network-port/headers/IOKit/network/IOKernelDebugger.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IOKernelDebugger.h",
+    "network-port/headers/IOKit/network/IOMbufMemoryCursor.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IOMbufMemoryCursor.h",
+    "network-port/headers/IOKit/network/IOMbufQueue.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IOMbufQueue.h",
+    "network-port/headers/IOKit/network/IONetworkController.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IONetworkController.h",
+    "network-port/headers/IOKit/network/IONetworkControllerPrivate.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IONetworkControllerPrivate.h",
+    "network-port/headers/IOKit/network/IONetworkData.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IONetworkData.h",
+    "network-port/headers/IOKit/network/IONetworkDebug.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IONetworkDebug.h",
+    "network-port/headers/IOKit/network/IONetworkInterface.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IONetworkInterface.h",
+    "network-port/headers/IOKit/network/IONetworkMedium.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IONetworkMedium.h",
+    "network-port/headers/IOKit/network/IONetworkStack.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IONetworkStack.h",
+    "network-port/headers/IOKit/network/IONetworkStats.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IONetworkStats.h",
+    "network-port/headers/IOKit/network/IONetworkUserClient.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IONetworkUserClient.h",
+    "network-port/headers/IOKit/network/IOOutputQueue.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IOOutputQueue.h",
+    "network-port/headers/IOKit/network/IOPacketQueue.h": "docs/progress/upstream-j1xlte/network-port/headers/IOKit/network/IOPacketQueue.h",
+    "nokextd/IOS7NoKextd035.h": "docs/progress/upstream-j1xlte/nokextd/IOS7NoKextd035.h",
+    "nokextd/flags/libkern/meta_features.h": "docs/progress/upstream-j1xlte/nokextd/flags/libkern/meta_features.h",
+    "nokextd/flags/libsa/meta_features.h": "docs/progress/upstream-j1xlte/nokextd/flags/libsa/meta_features.h",
+    "tools/check_source_completeness.py": "docs/progress/upstream-j1xlte/tools/check_source_completeness.py",
+    "xnu/README": "docs/progress/upstream-j1xlte/XNU-README.txt"
+  }
+}
