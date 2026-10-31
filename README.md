@@ -72,6 +72,8 @@ make TARGET_CONFIGS='RELEASE ARM EXYNOS4210_I9100' -j4
 
 ## Storage and checks
 
+Root filesystem download: [Google Drive](https://drive.google.com/file/d/1KqMwaWaMo_KrEhykoV1BcUsQpSfPAeD3/view?usp=sharing).
+
 MicroSD uses MBR and FAT32, containing `/IOS7/ROOTFS.HFS`: a raw, non-journaled
 HFS+ image with separately supplied compatible ARMv7 iOS 7 userspace. Writes
 use RAM copy-on-write and disappear at reboot. Small application windows have
