@@ -1,7 +1,7 @@
 # XNU for Samsung Galaxy S2 GT-I9100
 
 Experimental Darwin/XNU 2422 (iOS 7 era) ARMv7 port to the international
-Samsung Galaxy S2, Exynos4210, 1 GB RAM, 480×800 display. **MALI33, 2026-11-01.**
+Samsung Galaxy S2, Exynos4210, 1 GB RAM, 480×800 display. **MALI34, 2026-11-01; kernel MALI33.**
 
 Based on [kOtusin/xnu-j1xlte](https://github.com/kOtusin/xnu-j1xlte), with earlier
 HTC HD2 work credited to Garysss123. Historical reference:
@@ -16,8 +16,11 @@ Companion loader: [kernel86-64/uniloader, i9100](https://github.com/kernel86-64/
 
 MALI33 adds an initial [userspace Mali transport](userland/mali/README.md) and
 ARMv7 smoke client for private16x16 clear/copy/blend requests. It is prepared
-for phone validation, not connected to the live compositor. Full userspace
-image acceleration remains in development.
+for phone validation, not connected to the live compositor. After the user reported
+U0/0 with both MALI33 files installed, MALI34 fixes its boot registration in the
+embedded XPC LaunchDaemons cache. All existing jobs are preserved. Replace only
+the rootfs, retaining the MALI33 kernel; device confirmation is pending. Full
+userspace image acceleration remains in development.
 
 The runtime overlay now occupies three bottom rows: compact GPU status, BAT and
 LIVE IRQ; GPU also shows user submission count/error. GPU failures add one detail row. Home/touch, storage/performance and

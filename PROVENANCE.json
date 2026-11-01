@@ -3,8 +3,8 @@
   "upstream": "https://github.com/kernel86-64/i9100-XNU.git",
   "snapshot": {
     "date": "2026-11-01",
-    "stage": "MALI33",
-    "status": "GPU31/HUD32 self-test physically passes texture/blend/all4PP. Adds bounded userspace16x16 clear/copy/blend transport and original ARMv7 smoke client; new user path awaits device validation. Full-size compositor/GLES/EAGL acceleration remains unimplemented."
+    "stage": "MALI34",
+    "status": "MALI34 rootfs installer registers the original smoke job in the embedded XPC cache (192 old jobs preserved); user reported U0/0 on MALI33. Kernel remains MALI33. New rootfs awaits device validation. GPU31/HUD32 hardware self-test passed; full UI/GLES/EAGL acceleration remains unimplemented."
   },
   "includes_working_tree_changes": true
 }

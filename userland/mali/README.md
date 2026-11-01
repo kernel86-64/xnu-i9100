@@ -1,4 +1,4 @@
-# MALI33 userspace transport
+# MALI34 launch registration / MALI33 userspace transport
 
 This is the first bounded userspace-to-Mali rendering path. It is **not an
 OpenGL ES/EAGL implementation and does not accelerate SpringBoard yet**.
@@ -30,11 +30,12 @@ independently verify each256-pixel image from userspace. For automatic boot test
 create a new rootfs copy with its one-shot launch job:
 
 ```sh
-python3 userland/mali/install.py /path/to/ROOTFS.HFS /path/to/ROOTFS.MALI33.HFS
+python3 userland/mali/install.py /path/to/ROOTFS.HFS /path/to/ROOTFS.MALI34.HFS
 ```
 
 The input is preserved. The installer changes only its new copy, adds the client
-and launch plist, and fixes their HFS+ BSD uid/gid/mode offline. This avoids
+and launch plist, registers that job in the embedded XPC LaunchDaemons cache,
+and fixes their HFS+ BSD uid/gid/mode offline. This avoids
 accidentally shipping a launch job owned by the macOS user on a noowners mount.
 The rootfs must be raw, non-journaled HFS+/HFSX with its catalog in primary extents.
 The installer runs fsck_hfs on the new copy, including any HFSX folder-count
@@ -42,7 +43,16 @@ metadata upgraded by the macOS write mount. Installer errors must be resolved
 before using the output. Proprietary rootfs
 contents are never copied into the source repository.
 
-After boot with matching MALI33 kernel and rootfs, the GPU row adds `U3/0` if
+MALI33 installed only the disk plist. The supplied iOS7 launchctl normally uses
+the embedded XPC cache instead, so the client was absent from the active job
+list (user reported U0/0). MALI34 adds exactly that job, preserving all existing
+jobs and metadata and every cache byte outside the fixed-size plist section.
+The helper rejects caches with a declared code signature rather than invalidating
+them. It preserves cache permissions and does not change boot/code-signing flags.
+You may use ROOTFS.MALI33.HFS as input; a matching existing job is accepted.
+
+MALI34 requires replacing only the rootfs; retain the MALI33 kernel.
+After boot with the MALI33 kernel and MALI34 rootfs, the GPU row adds `U3/0` if
 all three user requests completed; the process also verifies all image pixels
 and writes `/var/log/i9100-mali-smoke.log`. U3 alone proves kernel completion,
 not that the userspace pixel comparison succeeded: inspect that log for final

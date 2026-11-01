@@ -1,5 +1,5 @@
 {
-  "stage": "MALI33",
+  "stage": "MALI34",
   "files": {
     ".gitignore": {
       "size": 302,
@@ -312,13 +312,13 @@
       "mode": "100644"
     },
     "PROVENANCE.json": {
-      "size": 516,
-      "sha256": "a59a72638f138a8b0c5cb38e9d4f7ffb803f23194807f5a8712428684f5234c2",
+      "size": 551,
+      "sha256": "d44b3e7966914c8f0dc3f09b220f5fc4852e81ea3935442777b4b91756907f11",
       "mode": "100644"
     },
     "README.md": {
-      "size": 5339,
-      "sha256": "c29cfed59e76d74c9c07aa47dc3b043e3c691b3af094eca975b9b1b2d306a85f",
+      "size": 5612,
+      "sha256": "b7c560e743695c09b315e0838ea3677ab9adbb01bb1cf01ccd6318b137157a82",
       "mode": "100644"
     },
     "SETUP/Makefile": {
@@ -7997,8 +7997,8 @@
       "mode": "100644"
     },
     "docs/GT-I9100.md": {
-      "size": 4678,
-      "sha256": "c19ddd44b096dca06883205bf3475224ced296901093f0235644d3f684316442",
+      "size": 4913,
+      "sha256": "3b1d1a1bad904dd56ca3bda552ac2c4f4f1e9d68957ba4ee02e93116c285b4c8",
       "mode": "100644"
     },
     "docs/README.upstream.md": {
@@ -8121,6 +8121,11 @@
       "sha256": "1074b593b0a06f7b922478ae510409c1b2a02275dcebd4e94c72d348bec4a1db",
       "mode": "100644"
     },
+    "docs/progress/MALI34_CACHED_LAUNCH_JOB_20261101.md": {
+      "size": 3463,
+      "sha256": "c98ff9a9b572af6b96207ee8e21a3ed33b1b8c487e9d3137101dcbbeacf14c39",
+      "mode": "100644"
+    },
     "docs/progress/MAP13_PMAP_EXPANSION_20261030.md": {
       "size": 4810,
       "sha256": "32593d55fa5def9a96d0882d95809e34b401ab50106775840b4ed7bf01d86ad3",
@@ -8162,8 +8167,8 @@
       "mode": "100644"
     },
     "docs/progress/README.md": {
-      "size": 3984,
-      "sha256": "e29a32dced243f7120f7c08e84e96ea4574166de664e0bcc84ce4451cfd34d2f",
+      "size": 4095,
+      "sha256": "c4d03ed9739b30efc547394ebefc4d19cd21a9166079bc9ef6f4a75852bdf618",
       "mode": "100644"
     },
     "docs/progress/RM29_REFMOD_RETENTION_20261031.md": {
@@ -18406,6 +18411,11 @@
       "sha256": "65ee52177e37fd884e12b95b925796d6a6f98b7427b27923561de36f09a984f2",
       "mode": "100644"
     },
+    "port-tests/check_i9100_mali_launch.py": {
+      "size": 3926,
+      "sha256": "426098fa45e3a50079c0a4e72bc6dc69237f43f6792080b1455186076b37c5c0",
+      "mode": "100644"
+    },
     "port-tests/check_i9100_mali_user.py": {
       "size": 6321,
       "sha256": "ef519614ffdf07bb671e2851a726845d4320ce1c8d8a992bae845c4dc6305e97",
@@ -19947,8 +19957,8 @@
       "mode": "100644"
     },
     "userland/mali/README.md": {
-      "size": 3155,
-      "sha256": "ce782f676c9c710f66cac49679a8d183b156ba025b45c2a12ad0a2356f48f70f",
+      "size": 3872,
+      "sha256": "6992517fde7f2d822b6f531d14e4790bd3b59d0cc93724b22a5db22a67b059a2",
       "mode": "100644"
     },
     "userland/mali/build.py": {
@@ -19962,8 +19972,13 @@
       "mode": "100644"
     },
     "userland/mali/install.py": {
-      "size": 7308,
-      "sha256": "e636dab2d5ac5d8941fa0a95936bb4383d4f98254e67b26ddf24f61f28fc3af9",
+      "size": 8120,
+      "sha256": "68204803366d9d3d27b3506e36a5c29e9087bc4d9b87e7405f925a321ab46695",
+      "mode": "100644"
+    },
+    "userland/mali/launch_cache.py": {
+      "size": 4693,
+      "sha256": "7cf31de12c17e6c842cb1e95059bf5cc67f9fb41619143df584c8d76d28d015e",
       "mode": "100644"
     },
     "xnu/xnu-doc/AppDelegate.h": {

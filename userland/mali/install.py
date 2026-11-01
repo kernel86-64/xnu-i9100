@@ -14,6 +14,7 @@ import shutil
 import struct
 import subprocess
 import tempfile
+from launch_cache import add_job
 
 
 def catalog_permissions(image, paths):
@@ -103,8 +104,21 @@ def main():
             job={'Label':'org.i9100.mali-smoke','ProgramArguments':['/usr/local/libexec/i9100-mali-smoke'],
                  'RunAtLoad':True,'StandardOutPath':'/var/log/i9100-mali-smoke.log',
                  'StandardErrorPath':'/var/log/i9100-mali-smoke.log'}
-            with jobpath.open('xb') as f:plistlib.dump(job,f)
-            jobpath.chmod(0o644);os.sync()
+            if jobpath.exists() and plistlib.loads(jobpath.read_bytes())!=job:
+                raise ValueError('Conflicting existing launch job')
+            with jobpath.open('wb') as f:plistlib.dump(job,f)
+            jobpath.chmod(0o644)
+            cache=mount/'System/Library/Caches/com.apple.dyld/dyld_shared_cache_armv7'
+            if not cache.resolve().is_relative_to(mount.resolve()):raise ValueError('Cache path escapes rootfs')
+            # The shipped cache is read-only even on a writable image. Restore
+            # its original permissions after changing this new copy's section.
+            cache_mode=cache.stat().st_mode & 0o7777
+            try:
+                cache.chmod(cache_mode | 0o200)
+                cache_change=add_job(cache,job)
+            finally:
+                cache.chmod(cache_mode)
+            os.sync()
         finally:
             if attached:subprocess.run(['hdiutil','detach',directory],check=True)
     permissions=catalog_permissions(output,['usr/local','usr/local/libexec',
@@ -122,7 +136,7 @@ def main():
         subprocess.run(['/sbin/fsck_hfs','-fn',raw],check=True)
     finally:subprocess.run(['hdiutil','detach',device],check=True)
     report={'source':str(source),'output':str(output),'binary_sha256':hashlib.sha256(binary.read_bytes()).hexdigest(),
-            'permissions':permissions,'scope':'one-shot private16x16 Mali userspace test; no GLES or compositor change'}
+            'permissions':permissions,'launch_cache_change':cache_change,'scope':'one-shot private16x16 Mali userspace test; no GLES or compositor change'}
     output.with_suffix(output.suffix+'.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report,indent=2))
 
