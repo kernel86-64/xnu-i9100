@@ -264,7 +264,7 @@ void ios7i9100_panic_text_end(void)
      * The top 256 rows are reserved; only the remaining body may scroll. */
     for(unsigned int n=0;n<480U*256U;n++)i9100_pixels[n]=0xff000000U;
     i9100f_cx=i9100f_cy=0;
-    i9100_puts("HUD32 CALL=");i9100_puthex(i9100_fatal_callsite);
+    i9100_puts("MALI33 CALL=");i9100_puthex(i9100_fatal_callsite);
     i9100_puts(" CAT=");i9100_puthex(i9100_fatal_category);
     i9100_puts("\nFORMATTED PANIC");
     if(i9100_panic_reason_known){
@@ -363,13 +363,13 @@ static void i9100_perf_text(unsigned y, const char *s)
 static void i9100_gpu_text(void)
 {
  char line[64];
- snprintf(line,sizeof(line),"GPU S%u E%d R%u C%u P%u J%u X%u A%x M%x G%u",
+ snprintf(line,sizeof(line),"GPU S%u E%d R%u C%u P%u J%u X%u A%x M%x G%u U%u/%d",
   i9100_mali_observation.phase,i9100_mali_observation.error,
   i9100_mali_observation.restore,i9100_mali_observation.clock_mhz,
   i9100_mali_observation.pixels,
   i9100_mali_observation.trial,i9100_mali_observation.textures,
   i9100_mali_observation.render_mask,i9100_mali_observation.mmu_fault,
-  i9100_mali_observation.guard);
+  i9100_mali_observation.guard,i9100_mali_user_completed,i9100_mali_user_error);
  i9100_perf_text(752,line);
  if(i9100_mali_observation.error){
   snprintf(line,sizeof(line),"GPU B%04x:%08x IRQ%x/%x T%u V%u PP%x",

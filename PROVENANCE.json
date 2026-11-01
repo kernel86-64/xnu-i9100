@@ -3,8 +3,8 @@
   "upstream": "https://github.com/kernel86-64/i9100-XNU.git",
   "snapshot": {
     "date": "2026-11-01",
-    "stage": "HUD32",
-    "status": "Compact runtime overlay: GPU, BAT and LIVE IRQ only; GPU error detail adds one row. Retains GPU31 clear packing and all input/trace/VM behavior. Physical GPU31 blend and PP1-3 validation pending; iOS GLES/EAGL backend remains unimplemented."
+    "stage": "MALI33",
+    "status": "GPU31/HUD32 self-test physically passes texture/blend/all4PP. Adds bounded userspace16x16 clear/copy/blend transport and original ARMv7 smoke client; new user path awaits device validation. Full-size compositor/GLES/EAGL acceleration remains unimplemented."
   },
   "includes_working_tree_changes": true
 }

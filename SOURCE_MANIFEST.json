@@ -1,5 +1,5 @@
 {
-  "stage": "HUD32",
+  "stage": "MALI33",
   "files": {
     ".gitignore": {
       "size": 302,
@@ -312,13 +312,13 @@
       "mode": "100644"
     },
     "PROVENANCE.json": {
-      "size": 499,
-      "sha256": "1bc8e671e7b570fd6f25ce59c04b44d12b1c55ce651b3e494b393863ff0b37cd",
+      "size": 516,
+      "sha256": "a59a72638f138a8b0c5cb38e9d4f7ffb803f23194807f5a8712428684f5234c2",
       "mode": "100644"
     },
     "README.md": {
-      "size": 4933,
-      "sha256": "6bf5ab51fa79290b6ef1406f6d081e6a86698e428cd8765f4d2208bdd551120f",
+      "size": 5339,
+      "sha256": "c29cfed59e76d74c9c07aa47dc3b043e3c691b3af094eca975b9b1b2d306a85f",
       "mode": "100644"
     },
     "SETUP/Makefile": {
@@ -7997,8 +7997,8 @@
       "mode": "100644"
     },
     "docs/GT-I9100.md": {
-      "size": 4392,
-      "sha256": "661977b66b46d7064a8496db8d8eb6ee5c1677d90c01de05b3e2cde8f9000071",
+      "size": 4678,
+      "sha256": "c19ddd44b096dca06883205bf3475224ced296901093f0235644d3f684316442",
       "mode": "100644"
     },
     "docs/README.upstream.md": {
@@ -8116,6 +8116,11 @@
       "sha256": "31af607706af75471ebfb85e1b53d58ac6ee7d7159ce801224d0a92e44d2cd8c",
       "mode": "100644"
     },
+    "docs/progress/MALI33_USERSPACE_TRANSPORT_20261101.md": {
+      "size": 4288,
+      "sha256": "1074b593b0a06f7b922478ae510409c1b2a02275dcebd4e94c72d348bec4a1db",
+      "mode": "100644"
+    },
     "docs/progress/MAP13_PMAP_EXPANSION_20261030.md": {
       "size": 4810,
       "sha256": "32593d55fa5def9a96d0882d95809e34b401ab50106775840b4ed7bf01d86ad3",
@@ -8157,8 +8162,8 @@
       "mode": "100644"
     },
     "docs/progress/README.md": {
-      "size": 3880,
-      "sha256": "6e7671fd5ab27fba3c3b0cc80bf49c4ed3bba8bed778bd7f42d8edfaef04866c",
+      "size": 3984,
+      "sha256": "e29a32dced243f7120f7c08e84e96ea4574166de664e0bcc84ce4451cfd34d2f",
       "mode": "100644"
     },
     "docs/progress/RM29_REFMOD_RETENTION_20261031.md": {
@@ -8447,8 +8452,8 @@
       "mode": "100644"
     },
     "iokit/Drivers/KernelBuiltIn/ARM/AppleARMPlatform/IOS7I9100Mali.cpp": {
-      "size": 8605,
-      "sha256": "444a149dfaaec55e73ac4663931ca8f4282e833fa8cefda1407d684fe1c2c321",
+      "size": 12675,
+      "sha256": "98906dd1c7c68fd8542ef4ef6315d38aa7ca23aeb53e027d3ed7092b3be9c895",
       "mode": "100644"
     },
     "iokit/Drivers/KernelBuiltIn/ARM/AppleARMPlatform/IOS7I9100Power.cpp": {
@@ -8657,18 +8662,23 @@
       "mode": "100644"
     },
     "iokit/Drivers/KernelBuiltIn/ARM/AppleARMPlatform/i9100_mali.c": {
-      "size": 20316,
-      "sha256": "ce39fad7cf70d6ea064a12830a73f8ff86b034cfecdc933879e8dac38c23d936",
+      "size": 21293,
+      "sha256": "d8476d4a3766cf5342ad7f0131c78b90778983104e9e646846ce583f06eb03ce",
       "mode": "100644"
     },
     "iokit/Drivers/KernelBuiltIn/ARM/AppleARMPlatform/i9100_mali.h": {
-      "size": 1212,
-      "sha256": "e38bc0694cc14aac467f53719487092b8fb3fd68b6e302182c12aeb4ee2820b4",
+      "size": 1507,
+      "sha256": "295878abdb442cd6d0a710e347dd6df6d402d13c82fa72cdb7d3549afeb13851",
       "mode": "100644"
     },
     "iokit/Drivers/KernelBuiltIn/ARM/AppleARMPlatform/i9100_mali_shaders.h": {
       "size": 2433,
       "sha256": "2edf91d85d6c680fe65b5d3329d589e3fb08dfcd7e1a021acd2463b8f57dd356",
+      "mode": "100644"
+    },
+    "iokit/Drivers/KernelBuiltIn/ARM/AppleARMPlatform/i9100_mali_user.h": {
+      "size": 1210,
+      "sha256": "dea8f78ba5e3756dd85459ef06f19a6aba0ca26663e3e1783e98203eec7aea22",
       "mode": "100644"
     },
     "iokit/Drivers/KernelBuiltIn/ARM/AppleARMPlatform/i9100_power.c": {
@@ -17982,8 +17992,8 @@
       "mode": "100644"
     },
     "pexpert/arm/pe_exynos4210_i9100.c": {
-      "size": 31285,
-      "sha256": "01c184f9b2f1add46e800489a43dd7d1212b7d0beac421889fe770b33c188ec8",
+      "size": 31341,
+      "sha256": "eaba15e123cfb1471cd3027c0ba5fade98339bf42b34fc358458e1334652d51e",
       "mode": "100644"
     },
     "pexpert/arm/pe_imx53.c": {
@@ -18387,8 +18397,18 @@
       "mode": "100644"
     },
     "port-tests/check_i9100_mali.py": {
-      "size": 18932,
-      "sha256": "8e69bce05e46a64e1074be823a0c265e3e13f1ebed9cc3db87abeaf1870b0a86",
+      "size": 20764,
+      "sha256": "292a6fc960ebb9524a17a3462c8182e05209efd57c885a81d0c5372d8c4a8fe0",
+      "mode": "100644"
+    },
+    "port-tests/check_i9100_mali_client.py": {
+      "size": 3179,
+      "sha256": "65ee52177e37fd884e12b95b925796d6a6f98b7427b27923561de36f09a984f2",
+      "mode": "100644"
+    },
+    "port-tests/check_i9100_mali_user.py": {
+      "size": 6321,
+      "sha256": "ef519614ffdf07bb671e2851a726845d4320ce1c8d8a992bae845c4dc6305e97",
       "mode": "100644"
     },
     "port-tests/check_i9100_pagecopy.py": {
@@ -18509,6 +18529,11 @@
     "port-tests/verify_i9100_app_geometry_native.py": {
       "size": 13755,
       "sha256": "5a741a31c1064795b906ad73aa067b80bcc1b0ad2bdd84e4214ae961fb30065d",
+      "mode": "100644"
+    },
+    "port-tests/verify_i9100_mali_client_native.py": {
+      "size": 5932,
+      "sha256": "e9131cc8298e9297decf3668dbe23d6967e99920dd36b9a19d8615293ee6bd1e",
       "mode": "100644"
     },
     "port-tests/verify_i9100_mali_native.py": {
@@ -19915,6 +19940,31 @@
       "size": 8101,
       "sha256": "e7b7add6f34408b8d8505a10177aae05aeedc081bb1fe3cefd23d09e4273194c",
       "mode": "100755"
+    },
+    "userland/mali/.gitignore": {
+      "size": 18,
+      "sha256": "744a1502c1d7ad664e0677975e40beb6cf6abfe3f49da5311af22b109a50af68",
+      "mode": "100644"
+    },
+    "userland/mali/README.md": {
+      "size": 3155,
+      "sha256": "ce782f676c9c710f66cac49679a8d183b156ba025b45c2a12ad0a2356f48f70f",
+      "mode": "100644"
+    },
+    "userland/mali/build.py": {
+      "size": 1435,
+      "sha256": "35e941dfb82f56ef36705e21576e003c0c8ade2377d258f981be12f35a814bf0",
+      "mode": "100644"
+    },
+    "userland/mali/i9100-mali-smoke.c": {
+      "size": 2838,
+      "sha256": "da5097686bf4adbce83941f6b3bdebbdff5ed003c63b7e4f46f15d1923893f84",
+      "mode": "100644"
+    },
+    "userland/mali/install.py": {
+      "size": 7308,
+      "sha256": "e636dab2d5ac5d8941fa0a95936bb4383d4f98254e67b26ddf24f61f28fc3af9",
+      "mode": "100644"
     },
     "xnu/xnu-doc/AppDelegate.h": {
       "size": 513,

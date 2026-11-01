@@ -23,11 +23,16 @@ struct i9100_mali_status {
  unsigned trial, vertices, triangles;
  unsigned textures, blends, render_mask;
 };
+#include "i9100_mali_user.h"
 extern volatile struct i9100_mali_status i9100_mali_observation;
+extern volatile unsigned i9100_mali_user_completed;
+extern volatile int i9100_mali_user_error;
 /* Private wired NC arena, contiguous/aligned, never a display or userspace BO.
  * Caller retains arena even on errors; GPU quiescence is not assumed on timeout. */
 int i9100_mali_selftest(const struct i9100_mali_io *, volatile uint32_t *,
                       uint32_t, unsigned, volatile struct i9100_mali_status *);
+int i9100_mali_render_request(const struct i9100_mali_io *,volatile uint32_t *,
+ uint32_t,unsigned,volatile struct i9100_mali_status *,const struct i9100_mali_request *);
 #ifdef __cplusplus
 }
 #endif

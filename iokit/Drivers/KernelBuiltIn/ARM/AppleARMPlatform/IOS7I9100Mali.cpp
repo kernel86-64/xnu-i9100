@@ -1,5 +1,6 @@
 #if defined(BOARD_CONFIG_EXYNOS4210_I9100)
 #include <IOKit/IOService.h>
+#include <IOKit/IOUserClient.h>
 #include <IOKit/IOBufferMemoryDescriptor.h>
 #include <IOKit/IOWorkLoop.h>
 #include <IOKit/IOTimerEventSource.h>
@@ -24,6 +25,7 @@ class IOS7I9100Mali : public IOService {
  IOBufferMemoryDescriptor *arena;
  IOWorkLoop *loop; IOTimerEventSource *timer;
  i9100_power_hw pmic;
+ IOLock *submitLock; bool usable; unsigned submissions;
  static uint32_t read(void *,unsigned,unsigned);
  static void write(void *,unsigned,unsigned,uint32_t);
  static uint32_t busRead(void *,unsigned,unsigned);
@@ -39,13 +41,16 @@ public:
  virtual bool init(void);
  virtual bool start(IOService *);
  virtual void free(void);
+ virtual IOReturn newUserClient(task_t,void *,UInt32,OSDictionary *,IOUserClient **);
+ IOReturn draw(const i9100_mali_request *,i9100_mali_reply *);
 };
 OSDefineMetaClassAndStructors(IOS7I9100Mali,IOService)
 bool IOS7I9100Mali::init(void)
 {
  if(!IOService::init())return false;
  bzero(device,sizeof(device));bzero(mapping,sizeof(mapping));bzero(regs,sizeof(regs));
- bzero(&pmic,sizeof(pmic));arena=0;loop=0;timer=0;return true;
+ bzero(&pmic,sizeof(pmic));arena=0;loop=0;timer=0;usable=false;submissions=0;
+ submitLock=IOLockAlloc();return submitLock!=0;
 }
 uint32_t IOS7I9100Mali::read(void *cookie,unsigned region,unsigned offset)
 {
@@ -87,7 +92,7 @@ bool IOS7I9100Mali::start(IOService *provider)
  PE_parse_boot_argn("i9100gpu",&enabled,sizeof(enabled));
  setName("IOS7I9100Mali");
  setProperty("GPUModel","ARM Mali-400 MP4");
- setProperty("DriverStage","isolated texture/blend/4PP test; no iOS GL backend");
+ setProperty("DriverStage","bounded userspace16x16 draws + boot4PP test; no iOS GL backend");
  if(!enabled) { setProperty("SelfTestEnabled",false);registerService();return true; }
  i9100_mali_observation.phase=1;
  const uint32_t address[4]={0x13000000U,0x10030000U,0x10020000U,0x11400000U};
@@ -111,6 +116,7 @@ void IOS7I9100Mali::tick(OSObject *owner,IOTimerEventSource *)
 {((IOS7I9100Mali *)owner)->run();}
 void IOS7I9100Mali::run(void)
 {
+ IOLockLock(submitLock);
  /* NC attributes on all CPU aliases are set by the existing pmap/IOKit path.
   * No user mapping, scanout allocation, shader compiler or global cache trap. */
  arena=IOBufferMemoryDescriptor::withOptions(kIODirectionInOut|
@@ -140,6 +146,9 @@ void IOS7I9100Mali::run(void)
   } else error=-16;
  }
  i9100_mali_observation.error=error;
+ usable=error==0 && i9100_mali_observation.restore==1;
+ setProperty("UserABI",(unsigned long long)I9100_MALI_USER_ABI,32);
+ setProperty("UserFixedRenderReady",usable);
  setProperty("SelfTestResult",(unsigned long long)(uint32_t)error,32);
  setProperty("VerifiedPixels",(unsigned long long)i9100_mali_observation.pixels,32);
  setProperty("VerifiedVertices",(unsigned long long)i9100_mali_observation.vertices,32);
@@ -156,15 +165,82 @@ void IOS7I9100Mali::run(void)
   i9100_mali_observation.pp_mask,i9100_mali_observation.pixels,i9100_mali_observation.guard,
   i9100_mali_observation.vertices,i9100_mali_observation.triangles,i9100_mali_observation.trial,
   i9100_mali_observation.textures,i9100_mali_observation.blends,i9100_mali_observation.render_mask);
+ IOLockUnlock(submitLock);
 }
 void IOS7I9100Mali::free(void)
 {
  if(timer) { timer->cancelTimeout();if(loop)loop->removeEventSource(timer);timer->release(); }
  if(loop)loop->release();
+ if(submitLock)IOLockFree(submitLock);
  /* The isolated64KiB arena is deliberately retained for the boot lifetime.
   * A failed GPU reset/power transition must never turn into DMA-after-free. */
  for(unsigned n=0;n<4;n++) { if(mapping[n])mapping[n]->release();if(device[n])device[n]->release(); }
  IOService::free();
+}
+/* The userspace ABI contains values only, never a GPU VA/PA or command stream.
+ * Serialize with boot tests and quarantine the retained arena after any error. */
+IOReturn IOS7I9100Mali::draw(const i9100_mali_request *request,i9100_mali_reply *reply)
+{
+ if(!i9100_mali_request_valid(request) || !reply)return kIOReturnBadArgument;
+ IOLockLock(submitLock);
+ if(!usable){IOLockUnlock(submitLock);return kIOReturnNotReady;}
+ bzero(reply,sizeof(*reply));reply->version=I9100_MALI_USER_ABI;
+ IOByteCount bytes=0;addr64_t pa=arena->getPhysicalSegment(0,&bytes);
+ if(!pa || pa>0xffffffffULL || bytes<I9100_MALI_BYTES){
+  reply->error=-1;i9100_mali_user_error=-1;usable=false;
+  setProperty("UserFixedRenderReady",false);IOLockUnlock(submitLock);return kIOReturnSuccess;
+ }
+ i9100_mali_status status;bzero(&status,sizeof(status));
+ i9100_mali_io io={this,read,write,delay,barrier,pmicRead,pmicWrite};
+ int error=i9100_mali_render_request(&io,(volatile uint32_t *)arena->getBytesNoCopy(),
+  (uint32_t)pa,(unsigned)bytes,&status,request);
+ if(!error && (status.restore!=1 || status.guard!=1 || status.pixels!=256))error=-19;
+ reply->error=error;reply->restore=status.restore;reply->pixels=status.pixels;
+ i9100_mali_user_error=error;
+ if(!error && status.restore==1 && status.guard==1){
+  volatile uint32_t *pixels=(volatile uint32_t *)arena->getBytesNoCopy()+0x8080/4;
+  for(unsigned n=0;n<256;n++)reply->output[n]=pixels[n];
+  i9100_mali_user_completed=++submissions;
+  setProperty("UserCompletedSubmissions",(unsigned long long)submissions,32);
+ }else{
+  usable=false;setProperty("UserFixedRenderReady",false);
+ }
+ IOLockUnlock(submitLock);
+ return kIOReturnSuccess; /* Device error is explicit in reply, not hidden. */
+}
+class IOS7I9100MaliClient : public IOUserClient {
+ OSDeclareDefaultStructors(IOS7I9100MaliClient)
+public:
+ virtual IOReturn clientClose(void){terminate();return kIOReturnSuccess;}
+ virtual IOReturn externalMethod(uint32_t selector,IOExternalMethodArguments *args,
+   IOExternalMethodDispatch *,OSObject *,void *);
+};
+OSDefineMetaClassAndStructors(IOS7I9100MaliClient,IOUserClient)
+IOReturn IOS7I9100MaliClient::externalMethod(uint32_t selector,IOExternalMethodArguments *a,
+ IOExternalMethodDispatch *,OSObject *,void *)
+{
+ if(selector!=0)return kIOReturnUnsupported;
+ if(!a || a->scalarInputCount || a->scalarOutputCount ||
+    a->structureInputDescriptor || a->structureOutputDescriptor ||
+    !a->structureInput || !a->structureOutput ||
+    a->structureInputSize!=sizeof(i9100_mali_request) ||
+    a->structureOutputSize!=sizeof(i9100_mali_reply))return kIOReturnBadArgument;
+ i9100_mali_request request;memcpy(&request,a->structureInput,sizeof(request));
+ if(!i9100_mali_request_valid(&request))return kIOReturnBadArgument;
+ IOS7I9100Mali *gpu=OSDynamicCast(IOS7I9100Mali,getProvider());
+ return gpu?gpu->draw(&request,(i9100_mali_reply *)a->structureOutput):kIOReturnNotAttached;
+}
+IOReturn IOS7I9100Mali::newUserClient(task_t task,void *security,UInt32 type,
+ OSDictionary *properties,IOUserClient **handler)
+{
+ if(!task || !handler || type)return kIOReturnBadArgument;
+ *handler=0;
+ IOS7I9100MaliClient *client=new IOS7I9100MaliClient;
+ if(!client)return kIOReturnNoMemory;
+ if(!client->initWithTask(task,security,type,properties)){client->release();return kIOReturnError;}
+ if(!client->attach(this)){client->release();return kIOReturnError;}
+ if(!client->start(this)){client->detach(this);client->release();return kIOReturnError;}
+ *handler=client;return kIOReturnSuccess;
 }
 void ios7i9100_register_mali(IOService *platform)
 {

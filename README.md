@@ -1,7 +1,7 @@
 # XNU for Samsung Galaxy S2 GT-I9100
 
 Experimental Darwin/XNU 2422 (iOS 7 era) ARMv7 port to the international
-Samsung Galaxy S2, Exynos4210, 1 GB RAM, 480×800 display. **HUD32, 2026-11-01.**
+Samsung Galaxy S2, Exynos4210, 1 GB RAM, 480×800 display. **MALI33, 2026-11-01.**
 
 Based on [kOtusin/xnu-j1xlte](https://github.com/kOtusin/xnu-j1xlte), with earlier
 HTC HD2 work credited to Garysss123. Historical reference:
@@ -14,8 +14,13 @@ Companion loader: [kernel86-64/uniloader, i9100](https://github.com/kernel86-64/
 
 ## Current status
 
+MALI33 adds an initial [userspace Mali transport](userland/mali/README.md) and
+ARMv7 smoke client for private16x16 clear/copy/blend requests. It is prepared
+for phone validation, not connected to the live compositor. Full userspace
+image acceleration remains in development.
+
 The runtime overlay now occupies three bottom rows: compact GPU status, BAT and
-LIVE IRQ. GPU failures add one detail row. Home/touch, storage/performance and
+LIVE IRQ; GPU also shows user submission count/error. GPU failures add one detail row. Home/touch, storage/performance and
 SpringBoard/backboard/abort diagnostics are retained in RAM and hidden from
 the runtime overlay. Fatal reports keep their separate emergency console.
 
@@ -31,7 +36,8 @@ The phone confirms GPU clears, vertex shaders, triangles, PP0 texture sampling
 and updating texels at the same GPU address. GPU30 failed its first alpha blend;
 GPU31 corrects RGBA clear-register versus BGRA writeback packing. Host checks
 reproduce the old photo's exact pixel and accept the corrected code. GPU31
-blending and PP1–3 execution still need a phone result.
+blending and PP0–3 execution passed on the phone (`gputesto.jpg`: S11/E0,
+4096 pixels,16 jobs,12 textured passes, rendered maskf, M0/G1/R1).
 
 **There is no iOS GLES/EAGL backend or GPU-accelerated SpringBoard yet.** Kernel
 memory fixes are retained, but the writer behind the QuartzCore slab assertion

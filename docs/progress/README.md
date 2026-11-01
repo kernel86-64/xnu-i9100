@@ -23,6 +23,7 @@ Current project status: [overview](../../README.md).
 - [HUD32: compact GPU, BAT and LIVE IRQ overlay](HUD32_COMPACT_OVERLAY_20261101.md)
 - [IRQ5: restore interrupt masks after enabling preemption](IRQ5_PREEMPTION_20261028.md)
 - [LOCK8: capture the contended simple-lock call chain](LOCK8_OWNERSHIP_20261028.md)
+- [MALI33: first bounded userspace-to-Mali rendering transport](MALI33_USERSPACE_TRANSPORT_20261101.md)
 - [MAP13: preserve a competing L2 installation](MAP13_PMAP_EXPANSION_20261030.md)
 - [panic333: IPC corruption and deeper VM audit](PANIC333_VM_AUDIT_20261030.md)
 - [PANIC7: retain the primary panic message](PANIC7_HEADER_20261028.md)

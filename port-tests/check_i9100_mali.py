@@ -28,7 +28,7 @@ enum {OK,POWER_ON_TIMEOUT,RESET_GP,RESET_PP,MMU_RESET,MMU_PAGING,L2_BUSY,
 static struct model {
  uint32_t gpu[0x10000/4],cmu[0x18000/4],pmu[0x10000/4],arena[I9100_MALI_BYTES/4];
  uint8_t pmic[256];unsigned mode,writes,fail_write,fail_after,reads,fail_read;
- unsigned gp_jobs,pp_jobs,delays,barriers,rsw_va,position_va,vertex_count,pp_seen;
+ unsigned gp_jobs,pp_jobs,delays,barriers,rsw_va,position_va,vertex_count,pp_seen,user_request;
  uint32_t saved_texels[4];
 } m;
 static const uint32_t pa=0x42000000;
@@ -54,7 +54,7 @@ static unsigned bits(const unsigned *w,unsigned off,unsigned width){
 }
 static void vs_job(void){
  unsigned *commands=walk(m.gpu[0],0);assert(m.gpu[1]-m.gpu[0]==96);
- int texture=m.gp_jobs>=5;unsigned count=texture?6:3,insns=texture?3:2;
+ int texture=commands[7]==0x40030000;unsigned count=texture?6:3,insns=texture?3:2;
  assert(commands[0]==0x28000 && commands[2]==1 && commands[4]==I9100_MALI_VA+0x2680);
  assert(commands[7]==(texture?0x40030000:0x40020000));
  assert(commands[8]==(texture?0x200800:0x100400) && commands[10]==(texture?0x01000100:0));
@@ -100,7 +100,7 @@ static void gp_job(void){
    case 0x7001e000:assert(triangle && p[0]==15U<<15);break;
    case 0x1000010a:case 0x1000010e:assert(triangle && !p[0]);break;
    case 0x1000010f:assert(triangle && p[0]==0x3f800000);break;
-   case 0x00040000:assert(triangle && p[0]==(m.gp_jobs>=5?6U:3U)<<24);m.vertex_count=p[0]>>24;break;
+   case 0x00040000:assert(triangle && p[0]==(walk(m.gpu[0],0)[7]==0x40030000?6U:3U)<<24);m.vertex_count=p[0]>>24;break;
    default:assert(0);
   }
  }
@@ -124,8 +124,9 @@ static uint32_t blend_fixture(uint32_t source,uint32_t destination){
 }
 static void pp_job(unsigned base){
  m.pp_jobs++;assert(m.gp_jobs==m.pp_jobs);unsigned core=(base-0x8000)/0x2000;
- int texture=m.pp_jobs>=5,blending=texture && (m.pp_jobs-5)%3==2;
- assert(core==(texture?(m.pp_jobs-5)/3:0));m.pp_seen|=1U<<core;
+ int texture=m.vertex_count==6;
+ int blending=texture && walk(m.rsw_va,0)[2]==0xfc8bc2d2;
+ assert(core==(m.user_request?0:texture?(m.pp_jobs-5)/3:0));m.pp_seen|=1U<<core;
  unsigned *stream=walk(m.gpu[base/4],0);
  assert(stream[0]==0 && stream[1]==0xb8000000 && stream[3]==0xb0000000 && stream[5]==0xbc000000);
  unsigned *rsw=walk(m.gpu[(base+4)/4],0);assert(rsw[8]==0xf008 && rsw[13]==0x100);
@@ -317,6 +318,40 @@ int main(void){
  initialize(OK,0);m.pmic[0x2b]=255;assert(i9100_mali_selftest(&io,m.arena,pa,sizeof(m.arena),&status)==-3 && !m.writes);
  initialize(OK,0);assert(i9100_mali_selftest(&io,m.arena,pa+1,sizeof(m.arena),&status)==-1 && !m.writes);
  assert(i9100_mali_selftest(&io,m.arena,pa,4096,&status)==-1);
+
+#ifndef OLD_CLEAR_CONTROL
+ for(unsigned n=0;n<120;n++){
+  initialize(OK,n&1);m.user_request=1;
+  struct i9100_mali_request r={1,n%3+1,0xff123456,0,{0}};
+  if(r.operation!=1)for(unsigned t=0;t<4;t++){
+   unsigned v=(n*41+t*17)&127;
+   r.texels[t]=(r.operation==2?0xff000000U:0x80000000U)|(v<<16)|((v/2)<<8)|(127-v);
+  }
+  assert(i9100_mali_request_valid(&r));
+  memset((void*)&status,0,sizeof(status));
+  assert(!i9100_mali_render_request(&io,m.arena,pa,sizeof(m.arena),&status,&r));
+  assert(status.pixels==256 && status.restore==1 && status.guard==1 && m.gp_jobs==1 && m.pp_jobs==1);
+  for(unsigned y=0;y<16;y++)for(unsigned x=0;x<16;x++){
+   unsigned v=r.operation==1?r.background:r.texels[(x/8)+(y/8)*2];
+   if(r.operation==3)v=blend_fixture(v,r.background);
+   assert(m.arena[0x8080/4+y*16+x]==v);
+  }
+ }
+ for(unsigned n=0;n<6;n++){
+  initialize(OK,0);
+  struct i9100_mali_request r={1,1,0xff000000,0,{0}};
+  if(n==0)r.version=0;if(n==1)r.operation=0;if(n==2)r.operation=4;
+  if(n==3)r.reserved=1;if(n==4)r.texels[0]=1;if(n==5){r.operation=3;r.texels[0]=0x01000200;}
+  assert(i9100_mali_render_request(&io,m.arena,pa,sizeof(m.arena),&status,&r)==-1 && !m.writes && !m.gp_jobs);
+ }
+ for(unsigned n=0;n<6;n++){
+  const unsigned modes[]={TEX_NO_DMA,GP_TIMEOUT,PP_TIMEOUT,BAD_GUARD,MMU_FAULT,BUS_STOP_TIMEOUT};
+  initialize(modes[n],0);m.user_request=1;
+  struct i9100_mali_request r={1,2,0xff000000,0,{0xff112233,0xff456789,0xff987654,0xffaabbcc}};
+  assert(i9100_mali_render_request(&io,m.arena,pa,sizeof(m.arena),&status,&r)!=0);
+ }
+ puts("PASS: userspace fixed draws:120 arbitrary clear/copy/blend requests on cold/warm domains, exact256 GPU-model pixels,6 invalid requests before MMIO,6 injected DMA/timeout/guard/restore failures.");
+#endif
  printf("PASS: actual Mali core %u power/clock/MMU/job/DMA/failure cases; two clears/two triangles plus12 texture/blend draws on4PP,4096-pixel checks and78 vertex readbacks, no-DMA false-success rejection, guard corruption and bounded waits/rollback; ASan/UBSan. Model only, not physical Mali validation.\n",cases+3);
 }
 '''

@@ -27,6 +27,8 @@
 #include "i9100_mali.h"
 #include "i9100_mali_shaders.h"
 volatile struct i9100_mali_status i9100_mali_observation;
+volatile unsigned i9100_mali_user_completed;
+volatile int i9100_mali_user_error;
 #define GPU I9100_MALI_GPU
 #define CMU I9100_MALI_CMU
 #define PMU I9100_MALI_PMU
@@ -230,12 +232,12 @@ static uint32_t protected_sum(volatile uint32_t *b)
  return sum;
 }
 static int render(const struct i9100_mali_io *io,volatile uint32_t *b,
-                  unsigned trial,volatile struct i9100_mali_status *s)
+                  unsigned trial,volatile struct i9100_mali_status *s,const struct i9100_mali_request *request)
 {
  s->trial=trial+1;
  unsigned textured=trial>=4,triangle=trial>=2,index=trial&1;
  unsigned pattern=textured?(trial-4)%3:0,core=textured?(trial-4)/3:0,base=pp[core];
- unsigned color=pattern==2 || trial==1?0xff402010U:trial?0xff000000U:0xffffffffU;
+ unsigned color=request?request->background:(pattern==2 || trial==1?0xff402010U:trial?0xff000000U:0xffffffffU);
  if(!reset_cores(io))return -8;
  for(unsigned n=0;n<4096/4;n++)b[0x8000/4+n]=0x5aa5c33c;
  for(unsigned n=0;n<4096/4;n++)b[0xa000/4+n]=0x5aa5c33c;
@@ -309,7 +311,7 @@ static int render(const struct i9100_mali_io *io,volatile uint32_t *b,
   unsigned expected=n>=32 && n<32+256?color:0x5aa5c33c;
   if(textured && n>=32 && n<288) {
    unsigned x=(n-32)&15,y=(n-32)>>4;
-   expected=texel(pattern,(x>>3)+2*(y>>3));
+   expected=request?request->texels[(x>>3)+2*(y>>3)]:texel(pattern,(x>>3)+2*(y>>3));
    if(pattern==2) {
     expected=source_over(expected,color);
     /* FP16/filter/blend rounding may differ by one output code point. */
@@ -346,8 +348,8 @@ static int render(const struct i9100_mali_io *io,volatile uint32_t *b,
  if(textured){s->textures++;s->render_mask|=1U<<core;if(pattern==2)s->blends++;}
  return 0;
 }
-int i9100_mali_selftest(const struct i9100_mali_io *io,volatile uint32_t *b,
- uint32_t pa,unsigned bytes,volatile struct i9100_mali_status *s)
+static int mali_execute(const struct i9100_mali_io *io,volatile uint32_t *b,
+ uint32_t pa,unsigned bytes,volatile struct i9100_mali_status *s,const struct i9100_mali_request *request)
 {
  if(!io || !io->read || !io->write || !io->pmic_read || !io->pmic_write ||
     !io->delay_us || !io->barrier || !b || !s || (pa&4095) ||
@@ -421,7 +423,13 @@ int i9100_mali_selftest(const struct i9100_mali_io *io,volatile uint32_t *b,
   wr(io,GPU,mmu[i]+8,0);
   if(!wait_bits(io,GPU,mmu[i]+4,1,1,100)){error=-9;goto restore;}
  }
- for(unsigned trial=0;trial<16;trial++) {
+ if(request) {
+  unsigned trial=request->operation==1?0:request->operation==2?4:6;
+  for(unsigned n=0;n<4;n++)b[0xb400/4+(n/2)*16+n%2]=request->texels[n];
+  checksum=protected_sum(b);
+  error=render(io,b,trial,s,request);
+  if(!error && protected_sum(b)!=checksum)error=-14;
+ } else for(unsigned trial=0;trial<16;trial++) {
   if(trial>=4) {
    /* Upload only private input texels, never expected output pixels. The
     * preceding job has completed/read back; the next job resets cores and
@@ -429,7 +437,7 @@ int i9100_mali_selftest(const struct i9100_mali_io *io,volatile uint32_t *b,
    for(unsigned n=0;n<4;n++)b[0xb400/4+(n/2)*16+n%2]=texel((trial-4)%3,n);
    checksum=protected_sum(b);
   }
-  error=render(io,b,trial,s);
+  error=render(io,b,trial,s,0);
   if(!error && protected_sum(b)!=checksum)error=-14;
   if(error)break;
  }
@@ -462,4 +470,14 @@ done:
  if(s->restore==2 && !error)error=-15;
  s->error=error;if(!error)s->phase=11;
  return error;
+}
+
+int i9100_mali_selftest(const struct i9100_mali_io *io,volatile uint32_t *b,
+ uint32_t pa,unsigned bytes,volatile struct i9100_mali_status *s)
+{return mali_execute(io,b,pa,bytes,s,0);}
+int i9100_mali_render_request(const struct i9100_mali_io *io,volatile uint32_t *b,
+ uint32_t pa,unsigned bytes,volatile struct i9100_mali_status *s,const struct i9100_mali_request *r)
+{
+ if(!i9100_mali_request_valid(r))return -1;
+ return mali_execute(io,b,pa,bytes,s,r);
 }
